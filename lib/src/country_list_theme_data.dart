@@ -6,10 +6,14 @@ class CountryListThemeData {
   /// If null, [backgroundColor] defaults to [BottomSheetThemeData.backgroundColor].
   final Color? backgroundColor;
 
+  final Color? selectedItemBackgroundColor;
+
   ///The style to use for country name text.
   ///
   /// If null, the style will be set to [TextStyle(fontSize: 16)]
   final TextStyle? textStyle;
+
+  final TextStyle? selectedTextStyle;
 
   ///The style to use for search box text.
   ///
@@ -50,17 +54,18 @@ class CountryListThemeData {
   /// the margin of the bottom sheet
   final EdgeInsets? margin;
 
-  const CountryListThemeData({
-    this.backgroundColor,
-    this.textStyle,
-    this.searchTextStyle,
-    this.flagSize,
-    this.inputDecoration,
-    this.borderRadius,
-    this.bottomSheetHeight,
-    this.bottomSheetWidth,
-    this.padding,
-    this.margin,
-    this.emojiFontFamilyFallback,
-  });
+  const CountryListThemeData(
+      {this.backgroundColor,
+      this.textStyle,
+      this.searchTextStyle,
+      this.flagSize,
+      this.inputDecoration,
+      this.borderRadius,
+      this.bottomSheetHeight,
+      this.bottomSheetWidth,
+      this.padding,
+      this.margin,
+      this.emojiFontFamilyFallback,
+      this.selectedItemBackgroundColor,
+      this.selectedTextStyle});
 }
