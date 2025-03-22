@@ -206,60 +206,63 @@ class _CountryListViewState extends State<CountryListView> {
 
     final bool isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    return Material(
-      // Add Material Widget with transparent color
-      // so the ripple effect of InkWell will show on tap
-      color: _isSelected ? _selectedBackgroundColor : Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          country.nameLocalized = CountryLocalizations.of(context)
-              ?.countryName(countryCode: country.countryCode)
-              ?.replaceAll(RegExp(r"\s+"), " ");
-          setState(() {
-            _selectedCountry = country;
-          });
-          widget.onSelect(country);
-          // Navigator.pop(context);
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-          child: Row(
-            children: <Widget>[
-              Row(
-                children: [
-                  const SizedBox(width: 20),
-                  if (widget.customFlagBuilder == null)
-                    _flagWidget(country)
-                  else
-                    widget.customFlagBuilder!(country),
-                  if (widget.showPhoneCode && !country.iswWorldWide) ...[
-                    const SizedBox(width: 15),
-                    SizedBox(
-                      width: 45,
-                      child: Text(
-                        '${isRtl ? '' : '+'}${country.phoneCode}${isRtl ? '+' : ''}',
-                        style: _isSelected ? _selectedTextStyle : _textStyle,
-                      ),
+    return ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Material(
+          // Add Material Widget with transparent color
+          // so the ripple effect of InkWell will show on tap
+          color: _isSelected ? _selectedBackgroundColor : Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              country.nameLocalized = CountryLocalizations.of(context)
+                  ?.countryName(countryCode: country.countryCode)
+                  ?.replaceAll(RegExp(r"\s+"), " ");
+              setState(() {
+                _selectedCountry = country;
+              });
+              widget.onSelect(country);
+              // Navigator.pop(context);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: Row(
+                children: <Widget>[
+                  Row(
+                    children: [
+                      const SizedBox(width: 20),
+                      if (widget.customFlagBuilder == null)
+                        _flagWidget(country)
+                      else
+                        widget.customFlagBuilder!(country),
+                      if (widget.showPhoneCode && !country.iswWorldWide) ...[
+                        const SizedBox(width: 15),
+                        SizedBox(
+                          width: 45,
+                          child: Text(
+                            '${isRtl ? '' : '+'}${country.phoneCode}${isRtl ? '+' : ''}',
+                            style:
+                                _isSelected ? _selectedTextStyle : _textStyle,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                      ] else
+                        const SizedBox(width: 15),
+                    ],
+                  ),
+                  Expanded(
+                    child: Text(
+                      CountryLocalizations.of(context)
+                              ?.countryName(countryCode: country.countryCode)
+                              ?.replaceAll(RegExp(r"\s+"), " ") ??
+                          country.name,
+                      style: _isSelected ? _selectedTextStyle : _textStyle,
                     ),
-                    const SizedBox(width: 5),
-                  ] else
-                    const SizedBox(width: 15),
+                  ),
                 ],
               ),
-              Expanded(
-                child: Text(
-                  CountryLocalizations.of(context)
-                          ?.countryName(countryCode: country.countryCode)
-                          ?.replaceAll(RegExp(r"\s+"), " ") ??
-                      country.name,
-                  style: _isSelected ? _selectedTextStyle : _textStyle,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget _flagWidget(Country country) {
