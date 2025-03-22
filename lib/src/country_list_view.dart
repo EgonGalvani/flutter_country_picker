@@ -48,6 +48,9 @@ class CountryListView extends StatefulWidget {
   /// Custom builder function for flag widget
   final CustomFlagBuilder? customFlagBuilder;
 
+  /// Theme for selected country 
+  final CountryListThemeData? selectedCountryTheme; 
+  
   const CountryListView({
     Key? key,
     required this.onSelect,
@@ -60,6 +63,7 @@ class CountryListView extends StatefulWidget {
     this.showWorldWide = false,
     this.showSearch = true,
     this.customFlagBuilder,
+    this.selectedCountryTheme, 
   })  : assert(
           exclude == null || countryFilter == null,
           'Cannot provide both exclude and countryFilter',
@@ -79,6 +83,7 @@ class _CountryListViewState extends State<CountryListView> {
   late TextEditingController _searchController;
   late bool _searchAutofocus;
   bool _isSearching = false;
+  Country? _selectedCountry;
 
   @override
   void initState() {
@@ -191,20 +196,25 @@ class _CountryListViewState extends State<CountryListView> {
   Widget _listRow(Country country) {
     final TextStyle _textStyle =
         widget.countryListTheme?.textStyle ?? _defaultTextStyle;
-
+    
+    final TextStyle _selectedTextStyle = 
+        widget.selectedCountryTheme?.textStyle ?? _defaultTextStyle;
+    final bool _isSelected = _selectedCountry != null && _selectedCountry.countryCode == country.countryCode; 
+    final Color _itemBackgroundColor = widget.selectedCountryTheme?.backgroundColor ?? Colors.transparent; 
     final bool isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Material(
       // Add Material Widget with transparent color
       // so the ripple effect of InkWell will show on tap
-      color: Colors.transparent,
+      color: _itemBackgroundColor,
       child: InkWell(
         onTap: () {
           country.nameLocalized = CountryLocalizations.of(context)
               ?.countryName(countryCode: country.countryCode)
               ?.replaceAll(RegExp(r"\s+"), " ");
+          setState((){ _selectedCountry = country; }); 
           widget.onSelect(country);
-          Navigator.pop(context);
+          // Navigator.pop(context);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -223,7 +233,7 @@ class _CountryListViewState extends State<CountryListView> {
                       width: 45,
                       child: Text(
                         '${isRtl ? '' : '+'}${country.phoneCode}${isRtl ? '+' : ''}',
-                        style: _textStyle,
+                        style: _isSelected ? _selectedTextStyle : _textStyle,
                       ),
                     ),
                     const SizedBox(width: 5),
