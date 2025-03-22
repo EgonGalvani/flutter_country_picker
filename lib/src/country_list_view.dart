@@ -48,23 +48,19 @@ class CountryListView extends StatefulWidget {
   /// Custom builder function for flag widget
   final CustomFlagBuilder? customFlagBuilder;
 
-  /// Theme for selected country 
-  final CountryListThemeData? selectedCountryTheme; 
-  
-  const CountryListView({
-    Key? key,
-    required this.onSelect,
-    this.exclude,
-    this.favorite,
-    this.countryFilter,
-    this.showPhoneCode = false,
-    this.countryListTheme,
-    this.searchAutofocus = false,
-    this.showWorldWide = false,
-    this.showSearch = true,
-    this.customFlagBuilder,
-    this.selectedCountryTheme, 
-  })  : assert(
+  const CountryListView(
+      {Key? key,
+      required this.onSelect,
+      this.exclude,
+      this.favorite,
+      this.countryFilter,
+      this.showPhoneCode = false,
+      this.countryListTheme,
+      this.searchAutofocus = false,
+      this.showWorldWide = false,
+      this.showSearch = true,
+      this.customFlagBuilder})
+      : assert(
           exclude == null || countryFilter == null,
           'Cannot provide both exclude and countryFilter',
         ),
@@ -152,8 +148,7 @@ class _CountryListViewState extends State<CountryListView> {
 
     return Column(
       children: <Widget>[
-        const SizedBox(height: 12),
-        if (widget.showSearch)
+        if (widget.showSearch) ...[
           TextField(
             autofocus: _searchAutofocus,
             controller: _searchController,
@@ -175,6 +170,8 @@ class _CountryListViewState extends State<CountryListView> {
               _checkSearchText(value);
             },
           ),
+          const SizedBox(height: 12),
+        ],
         Expanded(
           child: ListView(
             children: [
@@ -196,23 +193,31 @@ class _CountryListViewState extends State<CountryListView> {
   Widget _listRow(Country country) {
     final TextStyle _textStyle =
         widget.countryListTheme?.textStyle ?? _defaultTextStyle;
-    
-    final TextStyle _selectedTextStyle = 
-        widget.selectedCountryTheme?.textStyle ?? _defaultTextStyle;
-    final bool _isSelected = _selectedCountry != null && _selectedCountry.countryCode == country.countryCode; 
-    final Color _itemBackgroundColor = widget.selectedCountryTheme?.backgroundColor ?? Colors.transparent; 
+
+    final bool _isSelected = _selectedCountry != null &&
+        _selectedCountry?.countryCode == country.countryCode;
+
+    final TextStyle _selectedTextStyle =
+        widget.countryListTheme?.selectedTextStyle ?? _defaultTextStyle;
+
+    final Color _selectedBackgroundColor =
+        widget.countryListTheme?.selectedItemBackgroundColor ??
+            Colors.transparent;
+
     final bool isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Material(
       // Add Material Widget with transparent color
       // so the ripple effect of InkWell will show on tap
-      color: _itemBackgroundColor,
+      color: _isSelected ? _selectedBackgroundColor : Colors.transparent,
       child: InkWell(
         onTap: () {
           country.nameLocalized = CountryLocalizations.of(context)
               ?.countryName(countryCode: country.countryCode)
               ?.replaceAll(RegExp(r"\s+"), " ");
-          setState((){ _selectedCountry = country; }); 
+          setState(() {
+            _selectedCountry = country;
+          });
           widget.onSelect(country);
           // Navigator.pop(context);
         },
@@ -247,7 +252,7 @@ class _CountryListViewState extends State<CountryListView> {
                           ?.countryName(countryCode: country.countryCode)
                           ?.replaceAll(RegExp(r"\s+"), " ") ??
                       country.name,
-                  style: _textStyle,
+                  style: _isSelected ? _selectedTextStyle : _textStyle,
                 ),
               ),
             ],
